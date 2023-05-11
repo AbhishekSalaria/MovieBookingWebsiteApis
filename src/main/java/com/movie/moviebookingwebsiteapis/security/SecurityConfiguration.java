@@ -18,6 +18,8 @@ public class SecurityConfiguration{
                 .requestMatchers("/booking/book/**").authenticated()
                 .anyRequest().permitAll().and().httpBasic();
 
+        http.headers().frameOptions().disable();
+
         return http.build();
     }
 
