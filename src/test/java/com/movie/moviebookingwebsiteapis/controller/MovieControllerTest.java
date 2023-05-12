@@ -31,7 +31,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(MockitoExtension.class)
 @AutoConfigureMockMvc(addFilters=false)
-@ContextConfiguration
 @SpringBootTest
 @EnableAutoConfiguration(exclude = SecurityAutoConfiguration.class)
 class MovieControllerTest {
