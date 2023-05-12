@@ -1,7 +1,6 @@
 package com.movie.moviebookingwebsiteapis.controller;
 
 import com.movie.moviebookingwebsiteapis.entity.Cinema;
-import com.movie.moviebookingwebsiteapis.entity.Movie;
 import com.movie.moviebookingwebsiteapis.entity.MovieShowtime;
 import com.movie.moviebookingwebsiteapis.exception.NoElementFoundException;
 import com.movie.moviebookingwebsiteapis.service.CinemaService;
@@ -17,7 +16,7 @@ public class CinemaController {
     @Autowired
     CinemaService service;
 
-    @PutMapping("/add")
+    @PostMapping("/add")
     public Cinema addNewCinema(@RequestBody Cinema cinema) {
         return service.addNewCinema(cinema);
     }

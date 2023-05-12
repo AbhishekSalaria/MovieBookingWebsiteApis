@@ -16,7 +16,7 @@ public class MovieController {
     @Autowired
     MovieService service;
 
-    @PutMapping("/add")
+    @PostMapping("/add")
     public Movie addNewMovie(@RequestBody Movie movie) {
         return service.addNewMovie(movie);
     }
