@@ -2,9 +2,9 @@ package com.movie.moviebookingwebsiteapis.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.movie.moviebookingwebsiteapis.entity.Movie;
-import com.movie.moviebookingwebsiteapis.entity.MovieTitle;
-import com.movie.moviebookingwebsiteapis.service.*;
+import com.movie.moviebookingwebsiteapis.entity.Cinema;
+import com.movie.moviebookingwebsiteapis.entity.MovieShowtime;
+import com.movie.moviebookingwebsiteapis.service.CinemaService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -20,11 +20,11 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -32,57 +32,43 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc(addFilters=false)
 @SpringBootTest
 @EnableAutoConfiguration(exclude = SecurityAutoConfiguration.class)
-class MovieControllerTest {
+class CinemaControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
-    MovieService service;
+    CinemaService service;
 
     @Test
-    public void testaddNewMovie() throws Exception{
-        Movie movie = new Movie(1L,"dummy");
+    public void testaddNewCinema() throws Exception{
+        Cinema cinema = new Cinema(1L,"dummyCinema","dummyCity");
 
-        when(service.addNewMovie(movie)).thenReturn(movie);
+        when(service.addNewCinema(cinema)).thenReturn(cinema);
 
-        String inputJson = this.convertToJson(movie);
+        String inputJson = this.convertToJson(cinema);
 
         MvcResult mvcResult = mockMvc.perform(
-                        MockMvcRequestBuilders.post("/movie/add")
+                        MockMvcRequestBuilders.post("/cinema/add")
                                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                                 .content(inputJson))
                 .andReturn();
 
         int status = mvcResult.getResponse().getStatus();
         assertEquals(200,status);
+        assertEquals(mvcResult.getResponse().getContentAsString(),inputJson);
+
     }
 
     @Test
-    public void testgetAllMovies() throws  Exception{
-        List<Movie> movies = Arrays.asList(
-                new Movie(1L,"dummy")
+    public void testgetAllCinemas() throws Exception{
+        List<Cinema> cinemas = Arrays.asList(
+                new Cinema(1L,"dummyCinema","dummyCity")
         );
 
-        when(service.getAllMovies()).thenReturn(movies);
+        when(service.getAllCinemas()).thenReturn(cinemas);
 
-        RequestBuilder request = MockMvcRequestBuilders.get("/movie/movies");
-
-        MvcResult mvcResult = mockMvc.perform(request)
-                .andExpect(status().isOk())
-                .andReturn();
-
-        int status = mvcResult.getResponse().getStatus();
-        assertEquals(200,status);
-    }
-
-    @Test
-    public void testgetMovieById() throws Exception{
-        Movie movie = new Movie(1L,"dummy");
-
-        when(service.getMovieById(1L)).thenReturn(movie);
-
-        RequestBuilder request = MockMvcRequestBuilders.get("/movie/movie/1");
+        RequestBuilder request = MockMvcRequestBuilders.get("/cinema/cinemas");
 
         MvcResult mvcResult = mockMvc.perform(request)
                 .andExpect(status().isOk())
@@ -90,16 +76,35 @@ class MovieControllerTest {
 
         int status = mvcResult.getResponse().getStatus();
         assertEquals(200,status);
-
+        assertEquals(mvcResult.getResponse().getContentAsString(),this.convertToJson(cinemas));
     }
 
     @Test
-    void testgetMovieByCity() throws Exception{
-        List<MovieTitle> movies = Arrays.asList(new MovieTitle("dummy"));
+    public void testgetCinemaById() throws Exception{
+        Cinema cinema = new Cinema(1L,"dummyCinema","dummyCity");
 
-        when(service.getMovieByCity(anyString())).thenReturn(movies);
+        when(service.getCinemaById(1L)).thenReturn(cinema);
 
-        RequestBuilder request = MockMvcRequestBuilders.get("/movie/movie/city/dummy");
+        RequestBuilder request = MockMvcRequestBuilders.get("/cinema/cinema/1");
+
+        MvcResult mvcResult = mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andReturn();
+
+        int status = mvcResult.getResponse().getStatus();
+        assertEquals(200,status);
+        assertEquals(mvcResult.getResponse().getContentAsString(),this.convertToJson(cinema));
+    }
+
+    @Test
+    public void testgetCinemasPlayingMovie() throws Exception {
+        List<MovieShowtime> movieShowtimes = Arrays.asList(
+                new MovieShowtime("dummyCinema","dummyCity", LocalDateTime.now())
+        );
+
+        when(service.getCinemasPlayingMovie("dummy")).thenReturn(movieShowtimes);
+
+        RequestBuilder request = MockMvcRequestBuilders.get("/cinema/cinema/movie/dummy");
 
         MvcResult mvcResult = mockMvc.perform(request)
                 .andExpect(status().isOk())
